@@ -1,774 +1,410 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KRONOS TIERS - PvP Rankings</title>
+    <title>KRONOS TIERS - Rankings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-dark: #0b0c10;
+            --bg-navbar: #111217;
+            --accent-orange: #ff4a11;
+            --text-main: #ffffff;
+            --text-muted: #8a8d98;
+            --border-color: #1f2026;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-tertiary: #242424;
-            --text-primary: #f0f0f0;
-            --text-secondary: #a0a0a0;
-            --border-color: #3a3a3a;
-            --accent-red: #ff3333;
-            --accent-dark-red: #cc0000;
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
         }
 
-        html, body {
-            width: 100%;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 15% 40%, rgba(139, 92, 246, 0.02) 0%, transparent 50%),
-                radial-gradient(circle at 85% 70%, rgba(6, 182, 212, 0.02) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* TOP NAVIGATION */
-        nav {
-            position: relative;
-            z-index: 10;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0 20px;
-            height: 80px;
+        /* Верхняя панель навигации */
+        .navbar {
+            background-color: var(--bg-navbar);
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 30px;
-        }
-
-        .nav-logo {
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, var(--accent-red), #ff6600);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .nav-center {
-            display: flex;
-            gap: 30px;
-            flex: 1;
-            justify-content: center;
             align-items: center;
+            padding: 15px 40px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .nav-link {
-            color: var(--text-secondary);
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent-orange);
+            letter-spacing: 1px;
+        }
+
+        .brand img {
+            height: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s;
+            font-weight: 600;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: color 0.2s;
         }
 
-        .nav-link:hover {
-            color: var(--text-primary);
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-main);
         }
 
-        .nav-link.active {
-            color: var(--text-primary);
-            border-bottom: 2px solid white;
-            padding-bottom: 2px;
+        .nav-links a.active {
+            border-bottom: 2px solid var(--accent-orange);
+            padding-bottom: 4px;
         }
 
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-shrink: 0;
-        }
-
-        .nav-search {
+        .search-container {
             position: relative;
-            display: flex;
-            align-items: center;
         }
 
-        .nav-search input {
-            width: 200px;
-            padding: 8px 12px;
-            background: var(--bg-primary);
+        .search-container input {
+            background-color: #16171e;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-
-        .nav-search input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .nav-search input:focus {
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 220px;
             outline: none;
-            border-color: #8b5cf6;
-            color: var(--text-primary);
         }
 
-        /* MAIN CONTAINER */
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 100%;
-            padding: 30px 20px;
-        }
-
-        /* MODE SELECTOR */
-        .mode-tabs {
+        /* Контейнер режимов / иконок */
+        .modes-bar {
             display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px;
+            justify-content: flex-start;
+            gap: 30px;
+            padding: 30px 40px;
             overflow-x: auto;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .mode-tab {
+        .mode-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
+            gap: 10px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            transition: all 0.3s;
-            white-space: nowrap;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -22px;
-            padding-bottom: 22px;
+            opacity: 0.5;
+            transition: all 0.2s ease;
+            min-width: 60px;
         }
 
-        .mode-tab:hover {
-            color: var(--text-primary);
+        .mode-item:hover, .mode-item.active {
+            opacity: 1;
         }
 
-        .mode-tab.active {
-            color: var(--text-primary);
-            border-bottom-color: white;
+        .mode-item i {
+            font-size: 1.6rem;
         }
 
-        .mode-icon {
-            font-size: 24px;
+        .mode-item span {
+            font-size: 0.8rem;
+            font-weight: 700;
         }
 
-        /* TOP INFO BAR */
-        .top-info {
+        /* Цвета для твоих иконок */
+        .icon-overall { color: #3b82f6; }
+        .icon-ltms { color: #f3f4f6; }
+        .icon-vanilla { color: #eab308; }
+        .icon-uhc { color: #ef4444; }
+        .icon-pot { color: #06b6d4; }
+        .icon-netherop { color: #a855f7; }
+        .icon-smp { color: #22c55e; }
+        .icon-sword { color: #f59e0b; }
+        .icon-axe { color: #ec4899; }
+        .icon-mace { color: #6366f1; }
+
+        /* Дополнительная инфо-панель */
+        .info-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
+            padding: 20px 40px;
         }
 
-        .top-info-left {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: var(--bg-secondary);
+        .info-badge {
+            background-color: #16171e;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 13px;
-            color: var(--text-secondary);
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
 
-        .info-label {
-            font-weight: 600;
-            color: var(--text-primary);
+        .server-ip {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
         }
 
-        .server-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .server-ip span {
+            color: var(--accent-orange);
         }
 
-        /* RANKINGS TABLE */
-        .rankings-container {
-            overflow-x: auto;
+        /* Таблица рейтинга */
+        .ranking-table-container {
+            padding: 0 40px 40px 40px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: transparent;
-            min-width: 900px;
-        }
-
-        thead {
-            border-bottom: 1px solid var(--border-color);
+            text-align: left;
         }
 
         th {
-            padding: 16px 20px;
-            text-align: left;
-            font-weight: 700;
-            color: var(--text-secondary);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         td {
-            padding: 20px;
-            border-bottom: 1px solid rgba(37, 42, 55, 0.5);
-            font-size: 14px;
+            padding: 16px 10px;
+            border-bottom: 1px solid #111217;
+            font-size: 0.95rem;
+            vertical-align: middle;
         }
 
-        tbody tr {
-            transition: background 0.2s ease;
-        }
+        .col-num { width: 8%; color: var(--text-muted); font-weight: 700; }
+        .col-player { width: 52%; }
+        .col-region { width: 20%; color: var(--text-muted); font-weight: 600; }
+        .col-tiers { width: 20%; }
 
-        tbody tr:hover {
-            background: rgba(139, 92, 246, 0.06);
-        }
-
-        /* RANK COLUMN */
-        .rank-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            font-weight: 900;
-            font-size: 20px;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-
-        .rank-1 {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #000;
-        }
-
-        .rank-2 {
-            background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
-            color: #000;
-        }
-
-        .rank-3 {
-            background: linear-gradient(135deg, #CD7F32, #B8860B);
-            color: #fff;
-        }
-
-        .rank-num {
-            color: var(--text-secondary);
-        }
-
-        /* PLAYER COLUMN */
-        .player-info {
+        .player-flex {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .player-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 3px;
-            background: var(--bg-tertiary);
-            image-rendering: pixelated;
-            flex-shrink: 0;
-            border: 1px solid var(--border-color);
-        }
-
-        .player-details {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+        .avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            background-color: #1c1d24;
         }
 
         .player-name {
             font-weight: 700;
-            color: var(--text-primary);
-            font-size: 15px;
         }
 
-        .player-title {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        /* REGION BADGE */
-        .region-badge {
+        /* Бейджи Тиров */
+        .tier-tag {
             display: inline-block;
-            padding: 4px 10px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            padding: 4px 12px;
             border-radius: 4px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-primary);
-            min-width: 50px;
-            text-align: center;
+            font-weight: 800;
+            font-size: 0.8rem;
         }
 
-        .region-na { color: #ff4444; }
-        .region-eu { color: #44ff44; }
-        .region-other { color: var(--text-secondary); }
-
-        /* TIERS ROW */
-        .tiers-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
+        .tier-ht {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
         }
 
-        .tier-icon {
-            display: flex;
+        .tier-lt {
+            background-color: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+        }
+
+        /* Заглушка "Игроков не найдено" */
+        .no-players {
+            display: none;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: 700;
-            position: relative;
-            cursor: help;
-            border: 1px solid transparent;
+            padding: 60px 0;
+            color: var(--text-muted);
+            gap: 15px;
         }
 
-        .tier-icon[title] {
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .no-players i {
+            font-size: 3rem;
         }
-
-        /* Tier Colors */
-        .tier-HT1 { background: linear-gradient(135deg, #ff3333, #ff6600); color: #fff; }
-        .tier-LT1 { background: linear-gradient(135deg, #cc0000, #ff3333); color: #fff; }
-        .tier-HT2 { background: linear-gradient(135deg, #990000, #cc0000); color: #fff; }
-        .tier-LT2 { background: linear-gradient(135deg, #660000, #990000); color: #fff; }
-        .tier-HT3 { background: linear-gradient(135deg, #ff4444, #ff7777); color: #fff; }
-        .tier-LT3 { background: linear-gradient(135deg, #dd3333, #ff5555); color: #fff; }
-        .tier-HT4 { background: linear-gradient(135deg, #bb2222, #dd4444); color: #fff; }
-        .tier-LT4 { background: linear-gradient(135deg, #992222, #bb3333); color: #fff; }
-        .tier-HT5 { background: linear-gradient(135deg, #555555, #777777); color: #fff; }
-        .tier-LT5 { background: linear-gradient(135deg, #333333, #555555); color: #fff; }
-        .tier-none { background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); }
-
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 100px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            nav {
-                flex-wrap: wrap;
-                height: auto;
-                padding: 15px;
-                gap: 15px;
-            }
-
-            .nav-center {
-                flex-basis: 100%;
-                order: 3;
-                gap: 15px;
-            }
-
-            .nav-link {
-                font-size: 12px;
-            }
-
-            .nav-right {
-                gap: 10px;
-            }
-
-            .nav-search input {
-                width: 150px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                padding: 12px;
-            }
-
-            .nav-logo {
-                font-size: 18px;
-            }
-
-            .nav-center {
-                display: none;
-            }
-
-            .container {
-                padding: 20px 12px;
-            }
-
-            .mode-tabs {
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-
-            .mode-tab {
-                padding: 8px 12px;
-                font-size: 11px;
-            }
-
-            .mode-icon {
-                font-size: 20px;
-            }
-
-            th, td {
-                padding: 12px 15px;
-                font-size: 13px;
-            }
-
-            .player-avatar {
-                width: 40px;
-                height: 40px;
-            }
-
-            .tier-icon {
-                width: 24px;
-                height: 24px;
-                font-size: 10px;
-            }
-
-            .top-info {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .top-info-left {
-                flex-direction: column;
-            }
-
-            .server-info {
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 480px) {
-            nav {
-                padding: 10px;
-                height: auto;
-            }
-
-            .nav-logo {
-                font-size: 16px;
-            }
-
-            .nav-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .nav-search input {
-                width: 120px;
-                font-size: 12px;
-            }
-
-            .container {
-                padding: 15px 10px;
-            }
-
-            th, td {
-                padding: 10px 12px;
-                font-size: 12px;
-            }
-
-            .rank-badge {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-
-            .player-avatar {
-                width: 36px;
-                height: 36px;
-            }
-
-            .player-name {
-                font-size: 13px;
-            }
-
-            .tier-icon {
-                width: 22px;
-                height: 22px;
-                font-size: 9px;
-            }
-
-            .tiers-row {
-                gap: 4px;
-            }
-
-            .top-info-left {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        tbody tr {
-            animation: slideIn 0.4s ease-out;
-        }
-
-        tbody tr:nth-child(1) { animation-delay: 0.1s; }
-        tbody tr:nth-child(2) { animation-delay: 0.15s; }
-        tbody tr:nth-child(3) { animation-delay: 0.2s; }
-        tbody tr:nth-child(4) { animation-delay: 0.25s; }
-        tbody tr:nth-child(5) { animation-delay: 0.3s; }
-        tbody tr:nth-child(n+6) { animation-delay: 0.35s; }
     </style>
 </head>
 <body>
-    <!-- TOP NAVIGATION -->
-    <nav>
-        <div class="nav-logo">⚔️ KRONOS TIERS</div>
-        <div class="nav-center">
-            <a class="nav-link">🏠 Home</a>
-            <a class="nav-link active">🏆 Rankings</a>
-            <a class="nav-link">💬 Discords</a>
-            <a class="nav-link">📚 API Docs</a>
+
+    <nav class="navbar">
+        <div class="brand">
+            <i class="fas fa-bolt"></i> KRONOS TIERS
         </div>
-        <div class="nav-right">
-            <div class="nav-search">
-                <input type="text" id="navSearch" placeholder="Search player...">
-            </div>
-            <div style="color: var(--text-secondary); font-size: 12px;">/</div>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" class="active"><i class="fas fa-trophy"></i> Rankings</a></li>
+            <li><a href="#"><i class="fab fa-discord"></i> Discords</a></li>
+            <li><a href="#"><i class="fas fa-book"></i> API Docs</a></li>
+        </ul>
+        <div class="search-container">
+            <input type="text" id="playerSearch" placeholder="Search player..." oninput="drawTable()">
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <div class="container">
-        <!-- MODE TABS -->
-        <div class="mode-tabs">
-            <button class="mode-tab active" data-mode="overall">
-                <span class="mode-icon">🏅</span>
-                Overall
-            </button>
-            <button class="mode-tab" data-mode="ltm">
-                <span class="mode-icon">💀</span>
-                LTMs
-            </button>
-            <button class="mode-tab" data-mode="vanilla">
-                <span class="mode-icon">🎨</span>
-                Vanilla
-            </button>
-            <button class="mode-tab" data-mode="uhc">
-                <span class="mode-icon">❤️</span>
-                UHC
-            </button>
-            <button class="mode-tab" data-mode="pot">
-                <span class="mode-icon">🧪</span>
-                Pot
-            </button>
-            <button class="mode-tab" data-mode="netherpot">
-                <span class="mode-icon">🟣</span>
-                NetherOP
-            </button>
-            <button class="mode-tab" data-mode="smp">
-                <span class="mode-icon">✅</span>
-                SMP
-            </button>
-            <button class="mode-tab" data-mode="sword">
-                <span class="mode-icon">⚔️</span>
-                Sword
-            </button>
-            <button class="mode-tab" data-mode="axe">
-                <span class="mode-icon">🪓</span>
-                Axe
-            </button>
-            <button class="mode-tab" data-mode="mace">
-                <span class="mode-icon">🔨</span>
-                Mace
-            </button>
+    <div class="modes-bar">
+        <div class="mode-item active" onclick="changeMode('overall', this)">
+            <i class="fas fa-id-badge icon-overall"></i>
+            <span>Overall</span>
         </div>
-
-        <!-- TOP INFO -->
-        <div class="top-info">
-            <div class="top-info-left">
-                <div class="info-item">
-                    ℹ️ Information
-                </div>
-            </div>
-            <div class="server-info">
-                <span style="font-weight: 700; font-size: 13px;">🎮 SERVER IP</span>
-                <span style="font-weight: 700; color: var(--accent-red); font-size: 13px;">137.66.7.149:1008</span>
-                <span style="font-weight: 700; color: #6b7280; font-size: 13px;">💾 📊</span>
-            </div>
+        <div class="mode-item" onclick="changeMode('ltms', this)">
+            <i class="fas fa-skull icon-ltms"></i>
+            <span>LTMs</span>
         </div>
+        <div class="mode-item" onclick="changeMode('vanilla', this)">
+            <i class="fas fa-palette icon-vanilla"></i>
+            <span>Vanilla</span>
+        </div>
+        <div class="mode-item" onclick="changeMode('uhc', this)">
+            <i class="fas fa-heart icon-uhc"></i>
+            <span>UHC</span>
+        </div>
+        <div class="mode-item" onclick="changeMode('pot', this)">
+            <i class="fas fa-vial icon-pot"></i>
+            <span>Pot</span>
+        </div>
+        <div class="mode-item" onclick="changeMode('netherop', this)">
+            <i class="fas fa-circle icon-netherop"></i>
+            <span>NetherOP</span>
+        </div>
+        <div class="mode-item" onclick="changeMode('smp', this)">
+            <i class="fas fa-square-check icon-smp"></i>
+            <span>SMP</span>
+        </div>
+        <div class="mode-item" onclick="changeMode('sword', this)">
+            <i class="fas fa-crosshairs icon-sword"></i>
+            <span>Sword</span>
+        </div>
+        <div class="mode-item" onclick="changeMode('axe', this)">
+            <i class="fas fa-hammer icon-axe"></i>
+            <span>Axe</span>
+        </div>
+        <div class="mode-item" onclick="changeMode('mace', this)">
+            <i class="fas fa-gavel icon-mace"></i>
+            <span>Mace</span>
+        </div>
+    </div>
 
-        <!-- RANKINGS TABLE -->
-        <div class="rankings-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>PLAYER</th>
-                        <th>REGION</th>
-                        <th>TIERS</th>
-                    </tr>
-                </thead>
-                <tbody id="rankingsTable">
-                    <!-- Filled by JavaScript -->
+    <div class="info-row">
+        <div class="info-badge"><i class="fas fa-info-circle"></i> Information</div>
+        <div class="server-ip"><i class="fas fa-server"></i> SERVER IP: <span>137.66.7.149:1008</span></div>
+    </div>
+
+    <div class="ranking-table-container">
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th class="col-num">#</th>
+                    <th class="col-player">PLAYER</th>
+                    <th class="col-region">REGION</th>
+                    <th class="col-tiers">TIERS</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
                 </tbody>
-            </table>
+        </table>
+
+        <div class="no-players" id="emptyState">
+            <i class="fas fa-search"></i>
+            <p>Игроков не найдено</p>
         </div>
     </div>
 
     <script>
-        const tierModes = ['overall', 'ltm', 'vanilla', 'uhc', 'pot', 'netherpot', 'smp', 'sword', 'axe', 'mace'];
-        
-        const defaultPlayers = [];
+        let playersList = [];
+        let activeMode = 'overall';
 
-        let allPlayers = [];
-        let currentMode = 'overall';
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initEventListeners();
-            loadData();
-        });
-
-        function initEventListeners() {
-            document.querySelectorAll('.mode-tab').forEach(tab => {
-                tab.addEventListener('click', (e) => {
-                    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-                    e.target.closest('.mode-tab').classList.add('active');
-                    currentMode = e.target.closest('.mode-tab').dataset.mode;
-                    renderTable(allPlayers);
-                });
-            });
-
-            ['navSearch'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', (e) => {
-                        const filtered = allPlayers.filter(p =>
-                            p.name.toLowerCase().includes(e.target.value.toLowerCase())
-                        );
-                        renderTable(filtered);
-                    });
-                }
-            });
-        }
-
-        async function loadData() {
+        async function fetchRankings() {
             try {
-                const response = await fetch('/api/rankings');
-                if (!response.ok) throw new Error('API Error');
-                const data = await response.json();
-                allPlayers = Array.isArray(data) ? data : data.players || [];
-                if (allPlayers.length === 0) allPlayers = defaultPlayers;
-            } catch (error) {
-                console.warn('Using demo data');
-                allPlayers = defaultPlayers;
+                const res = await fetch('/api/players');
+                if (res.ok) {
+                    playersList = await res.json();
+                }
+            } catch (e) {
+                console.log("Режим офлайн. Используем базовые данные.");
+                playersList = [
+                    { name: "strafikk", region: "EU", overall: "HT1", ltms: "LT1", vanilla: "HT2", uhc: "HT1", pot: "HT1", netherop: "LT1", smp: "HT3", sword: "HT1", axe: "LT2", mace: "HT1" },
+                    { name: "OUTSOBER", region: "EU", overall: "HT1", ltms: "HT3", vanilla: "LT1", uhc: "LT2", pot: "HT1", netherop: "HT2", smp: "LT1", sword: "HT1", axe: "HT3", mace: "LT1" },
+                    { name: "kayoumi", region: "AS", overall: "HT1", ltms: "LT2", vanilla: "HT1", uhc: "HT3", pot: "HT1", netherop: "LT3", smp: "HT2", sword: "HT1", axe: "LT1", mace: "HT3" }
+                ];
             }
-
-            allPlayers.sort((a, b) => (b.points || 0) - (a.points || 0));
-            renderTable(allPlayers);
+            drawTable();
         }
 
-        function getTierIcon(tier) {
-            const tierColors = {
-                'HT1': '🔴', 'LT1': '🟣', 'HT2': '🟣', 'LT2': '🟣',
-                'HT3': '🔵', 'LT3': '🔵', 'HT4': '🟢', 'LT4': '🟢',
-                'HT5': '⚫', 'LT5': '⚫'
-            };
-            return tierColors[tier] || '⚪';
+        function changeMode(mode, element) {
+            activeMode = mode;
+            document.querySelectorAll('.mode-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            drawTable();
         }
 
-        function renderTable(players) {
-            const tbody = document.getElementById('rankingsTable');
+        function drawTable() {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            const tableElement = document.getElementById('mainTable');
+            const query = document.getElementById('playerSearch').value.toLowerCase();
+            
             tbody.innerHTML = '';
 
-            if (players.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="border: none; padding: 0;"><div class="empty-state"><div class="empty-state-icon">🔍</div>Игроков не найдено</div></td></tr>';
+            // Фильтруем список по поисковой строке
+            let filtered = playersList.filter(p => p.name.toLowerCase().includes(query));
+
+            if (filtered.length === 0) {
+                tableElement.style.display = 'none';
+                emptyState.style.display = 'flex';
                 return;
             }
 
-            players.forEach((player, index) => {
-                const row = document.createElement('tr');
-                
-                let rankBadge = '';
-                if (index === 0) rankBadge = '<span class="rank-badge rank-1">1.</span>';
-                else if (index === 1) rankBadge = '<span class="rank-badge rank-2">2.</span>';
-                else if (index === 2) rankBadge = '<span class="rank-badge rank-3">3.</span>';
-                else rankBadge = `<span class="rank-num">${index + 1}.</span>`;
+            tableElement.style.display = 'table';
+            emptyState.style.display = 'none';
 
-                const regionClass = player.region === 'NA' ? 'region-na' : player.region === 'EU' ? 'region-eu' : 'region-other';
+            filtered.forEach((player, i) => {
+                const tr = document.createElement('tr');
+                const tierValue = player[activeMode] || '—';
                 
-                let tiersHtml = '';
-                tierModes.forEach(mode => {
-                    const tier = player.tiers?.[mode] || 'none';
-                    tiersHtml += `<span class="tier-icon tier-${tier}" title="${mode.toUpperCase()}: ${tier}">${tier === 'none' ? '-' : tier}</span>`;
-                });
+                let badgeClass = 'tier-tag';
+                if (tierValue.startsWith('HT')) badgeClass += ' tier-ht';
+                if (tierValue.startsWith('LT')) badgeClass += ' tier-lt';
 
-                row.innerHTML = `
-                    <td>${rankBadge}</td>
-                    <td>
-                        <div class="player-info">
-                            <img src="https://minotar.net/helm/${encodeURIComponent(player.name)}/32.png" alt="${player.name}" class="player-avatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect fill=%22%231a1d28%22 width=%2232%22 height=%2232%22/%3E%3Crect fill=%22%238b5cf6%22 x=%226%22 y=%226%22 width=%2220%22 height=%2220%22/%3E%3C/svg%3E'">
-                            <div class="player-details">
-                                <div class="player-name">${player.name}</div>
-                                <div class="player-title">⚡ ${player.title || 'Player'}</div>
-                            </div>
+                tr.innerHTML = `
+                    <td class="col-num">${i + 1}</td>
+                    <td class="col-player">
+                        <div class="player-flex">
+                            <img class="avatar" src="https://minotar.net/helm/${player.name}/26.png" onerror="this.src='https://minotar.net/helm/MHF_Question/26.png'">
+                            <span class="player-name">${player.name}</span>
                         </div>
                     </td>
-                    <td><span class="region-badge ${regionClass}">${player.region}</span></td>
-                    <td><div class="tiers-row">${tiersHtml}</div></td>
+                    <td class="col-region">${player.region || '—'}</td>
+                    <td class="col-tiers"><span class="${badgeClass}">${tierValue}</span></td>
                 `;
-                
-                tbody.appendChild(row);
+                tbody.appendChild(tr);
             });
         }
+
+        window.onload = fetchRankings;
     </script>
 </body>
 </html>
