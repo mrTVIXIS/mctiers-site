@@ -3,306 +3,447 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рейтинг Игроков | MCTiers Clone</title>
+    <title>KRONOS TIERS - PvP Rankings</title>
     <style>
-        :root {
-            --bg-color: #0f111a;
-            --card-bg: #161925;
-            --text-color: #f0f3f5;
-            --accent-color: #5865f2;
-            --border-color: #23283d;
-            
-            /* Цвета тиров */
-            --tier-ht1: #ffb800;
-            --tier-lt1: #ffdd67;
-            --tier-ht2: #ff4655;
-            --tier-lt2: #ff7581;
-            --tier-ht3: #b967ff;
-            --tier-lt3: #d29bff;
-            --tier-ht4: #00f5ff;
-            --tier-lt4: #70f9ff;
-            --tier-ht5: #34e7a4;
-            --tier-lt5: #83f3c7;
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+        :root {
+            --bg-primary: #0d0e12;
+            --bg-secondary: #12131a;
+            --bg-tertiary: #1c1e27;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --border-color: #252837;
+            --accent-red: #ff3333;
+        }
+
+        html, body {
+            width: 100%;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 40%, rgba(255, 51, 51, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 85% 70%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* TOP NAVIGATION */
+        nav {
+            position: relative;
+            z-index: 10;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .nav-logo {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--accent-red), #ff6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 30px;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-primary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .nav-search input {
+            width: 200px;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .nav-search input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 40px 20px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            color: #8a939e;
-        }
-
-        .controls {
+        /* MODE SELECTOR */
+        .mode-tabs {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .mode-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        .mode-tabs::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .mode-tab {
+            display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            background: var(--card-bg);
-            padding: 15px;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .modes {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .mode-btn {
-            background: #202438;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 6px;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.2s ease;
             font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        .mode-btn:hover, .mode-btn.active {
-            background: var(--accent-color);
-            border-color: var(--accent-color);
+        .mode-tab:hover {
+            color: var(--text-primary);
+            border-color: #4a4f6e;
         }
 
-        .search-box input {
-            background: #202438;
+        .mode-tab.active {
+            color: #fff;
+            background: rgba(255, 51, 51, 0.1);
+            border-color: var(--accent-red);
+        }
+
+        /* RANKINGS TABLE */
+        .rankings-container {
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px 16px;
-            border-radius: 6px;
-            width: 250px;
-            outline: none;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        .search-box input:focus {
-            border-color: var(--accent-color);
-        }
-
-        .leaderboard-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
         }
 
-        .leaderboard-table th, .leaderboard-table td {
-            padding: 14px 20px;
+        th {
+            padding: 16px 24px;
             text-align: left;
-        }
-
-        .leaderboard-table th {
-            background-color: #1a1e2e;
-            color: #8a939e;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 12px;
             text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
-
-        .leaderboard-table tr {
+            letter-spacing: 0.8px;
+            background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid var(--border-color);
-            transition: background 0.15s ease;
         }
 
-        .leaderboard-table tr:hover {
-            background-color: #1d2133;
+        td {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            vertical-align: middle;
         }
 
-        .rank {
-            font-weight: bold;
-            color: #8a939e;
-            width: 70px;
+        tbody tr {
+            transition: background 0.2s ease;
         }
 
-        tr:nth-child(1) .rank { color: #ffd700; font-size: 1.2rem; }
-        tr:nth-child(2) .rank { color: #c0c0c0; font-size: 1.1rem; }
-        tr:nth-child(3) .rank { color: #cd7f32; font-size: 1.05rem; }
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
 
-        .player-cell {
+        /* RANK BADGES */
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            font-weight: 900;
+            font-size: 15px;
+            border-radius: 6px;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
+        .rank-2 { background: linear-gradient(135deg, #E0E0E0, #999999); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); color: #fff; }
+        .rank-num { color: var(--text-secondary); font-weight: 700; padding-left: 8px; }
+
+        /* PLAYER INFO */
+        .player-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .player-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
-            background: #2a2f45;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            background: var(--bg-tertiary);
+            image-rendering: pixelated;
+            border: 1px solid var(--border-color);
         }
 
         .player-name {
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 15px;
         }
 
-        .tier-badge {
+        /* ELO POINTS */
+        .elo-badge {
+            font-weight: 700;
+            color: #44ff44;
+            background: rgba(68, 255, 68, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            text-align: center;
-            min-width: 55px;
         }
 
-        /* Классы для раскраски тиров */
-        .tier-HT1 { background: rgba(255, 184, 0, 0.15); color: var(--tier-ht1); border: 1px solid var(--tier-ht1); }
-        .tier-LT1 { background: rgba(255, 221, 103, 0.15); color: var(--tier-lt1); border: 1px solid var(--tier-lt1); }
-        .tier-HT2 { background: rgba(255, 70, 85, 0.15); color: var(--tier-ht2); border: 1px solid var(--tier-ht2); }
-        .tier-LT2 { background: rgba(255, 117, 129, 0.15); color: var(--tier-lt2); border: 1px solid var(--tier-lt2); }
-        .tier-HT3 { background: rgba(185, 103, 255, 0.15); color: var(--tier-ht3); border: 1px solid var(--tier-ht3); }
-        .tier-LT3 { background: rgba(210, 155, 255, 0.15); color: var(--tier-lt3); border: 1px solid var(--tier-lt3); }
-        .tier-HT4 { background: rgba(0, 245, 255, 0.15); color: var(--tier-ht4); border: 1px solid var(--tier-ht4); }
-        .tier-LT4 { background: rgba(112, 249, 255, 0.15); color: var(--tier-lt4); border: 1px solid var(--tier-lt4); }
-        .tier-HT5 { background: rgba(52, 231, 164, 0.15); color: var(--tier-ht5); border: 1px solid var(--tier-ht5); }
-        .tier-LT5 { background: rgba(131, 243, 199, 0.15); color: var(--tier-lt5); border: 1px solid var(--tier-lt5); }
-        .tier-none { background: #2a2f45; color: #8a939e; }
+        /* PREMIUM TIERS PLATES */
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            min-width: 75px;
+            text-align: center;
+        }
 
-        .points {
-            font-weight: 600;
-            color: #34e7a4;
+        /* Цвета и свечение градиентов для тиров */
+        .tier-HT1 { background: linear-gradient(135deg, #ff2a2a, #ff6a00); color: #fff; box-shadow: 0 0 15px rgba(255, 42, 42, 0.4); border: 1px solid #ff6a00; }
+        .tier-LT1 { background: linear-gradient(135deg, #d30000, #ff2a2a); color: #fff; }
+        .tier-HT2 { background: linear-gradient(135deg, #b600ee, #ff3bf9); color: #fff; box-shadow: 0 0 12px rgba(182, 0, 238, 0.3); }
+        .tier-LT2 { background: linear-gradient(135deg, #8100ee, #b600ee); color: #fff; }
+        .tier-HT3 { background: linear-gradient(135deg, #0055ff, #00aaff); color: #fff; }
+        .tier-LT3 { background: linear-gradient(135deg, #0033cc, #0055ff); color: #fff; }
+        .tier-HT4 { background: linear-gradient(135deg, #00aa55, #00ff88); color: #000; font-weight: 900; }
+        .tier-LT4 { background: linear-gradient(135deg, #007733, #00aa55); color: #fff; }
+        .tier-HT5 { background: linear-gradient(135deg, #555555, #888888); color: #fff; }
+        .tier-LT5 { background: linear-gradient(135deg, #222222, #444444); color: #bbb; border: 1px solid #555; }
+        .tier-none { background: #1c1e27; color: #666; border: 1px solid var(--border-color); box-shadow: none; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        tbody tr {
+            animation: fadeIn 0.3s ease-out forwards;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Рейтинг Игроков Сервера</h1>
-        <p>Официальные PvP тиры и общая таблица лидеров</p>
-    </header>
-
-    <div class="controls">
-        <div class="modes" id="modeContainer">
-            <button class="mode-btn active" onclick="changeMode('overall')">Overall</button>
-            <button class="mode-btn" onclick="changeMode('crystal')">Crystal</button>
-            <button class="mode-btn" onclick="changeMode('sword')">Sword</button>
-            <button class="mode-btn" onclick="changeMode('pot')">Netherite Pot</button>
+    <nav>
+        <div class="nav-logo">⚔️ KRONOS TIERS</div>
+        <div class="nav-center">
+            <a class="nav-link active">🏆 Rankings</a>
+            <a class="nav-link" href="https://discord.gg/yourlink" target="_blank">💬 Discord</a>
         </div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Поиск игрока..." oninput="filterPlayers()">
+        <div class="nav-right">
+            <div class="nav-search">
+                <input type="text" id="navSearch" placeholder="Поиск игрока...">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="overall">🏅 Overall</button>
+            <button class="mode-tab" data-mode="crystal">🔮 Crystal</button>
+            <button class="mode-tab" data-mode="sword">⚔️ Sword</button>
+            <button class="mode-tab" data-mode="netherite pot">🧪 Netherite Pot</button>
+        </div>
+
+        <div class="rankings-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Ранг</th>
+                        <th>Игрок</th>
+                        <th style="width: 180px;">Рейтинг (Elo)</th>
+                        <th style="width: 180px;">Текущий Тир</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingsTable">
+                    </tbody>
+            </table>
         </div>
     </div>
 
-    <table class="leaderboard-table">
-        <thead>
-            <tr>
-                <th style="width: 80px;">Ранг</th>
-                <th>Игрок</th>
-                <th style="width: 150px;">Текущий Тир</th>
-                <th style="width: 120px;">Очки</th>
-            </tr>
-        </thead>
-        <tbody id="leaderboardBody">
-            </tbody>
-    </table>
-</div>
+    <script>
+        // Демо-данные на случай, если сервер пуст
+        const defaultPlayers = [
+            { name: "mrTVIXIS", points: 1450, tiers: { overall: "HT1", crystal: "HT1", sword: "LT1", "netherite pot": "none" } },
+            { name: "Player_Beta", points: 1120, tiers: { overall: "HT2", crystal: "LT2", sword: "HT2", "netherite pot": "none" } },
+            { name: "GamerXP", points: 820, tiers: { overall: "HT3", crystal: "HT3", sword: "none", "netherite pot": "none" } },
+            { name: "NoobPvP", points: 210, tiers: { overall: "LT5", crystal: "none", sword: "LT5", "netherite pot": "none" } }
+        ];
 
-<script>
-    // Демонстрационные данные (в реальности будут запрашиваться с бэкенда)
-    let playersData = [
-        { name: "strafikk", points: 157, tiers: { overall: "HT1", crystal: "LT1", sword: "HT2", pot: "HT3" } },
-        { name: "OUTSOBER", points: 109, tiers: { overall: "HT1", crystal: "LT2", sword: "HT3", pot: "LT3" } },
-        { name: "kayoumi", points: 106, tiers: { overall: "HT1", crystal: "LT2", sword: "HT3", pot: "none" } },
-        { name: "flowromance", points: 92, tiers: { overall: "HT1", crystal: "HT3", sword: "HT3", pot: "LT3" } },
-        { name: "oleg_321f", points: 65, tiers: { overall: "LT2", crystal: "HT3", sword: "HT3", pot: "HT3" } },
-        { name: "gassdent", points: 58, tiers: { overall: "HT3", crystal: "HT3", sword: "HT3", pot: "HT3" } },
-        { name: "Player_Zero", points: 34, tiers: { overall: "LT4", crystal: "HT4", sword: "LT5", pot: "none" } }
-    ];
+        let allPlayers = [];
+        let currentMode = 'overall';
 
-    let currentMode = 'overall';
-
-    function renderLeaderboard(data) {
-        const tbody = document.getElementById('leaderboardBody');
-        tbody.innerHTML = '';
-
-        // Сортируем данные в зависимости от очков (или можно сделать сортировку по силе тира в режиме)
-        let sortedData = [...data].sort((a, b) => b.points - a.points);
-
-        sortedData.forEach((player, index) => {
-            const tier = player.tiers[currentMode] || 'none';
-            const tr = document.createElement('tr');
-            
-            // Получаем аватарку по нику с помощью сервиса Crafatar / Minotar
-            const avatarUrl = `https://minotar.net/helm/${player.name}/28.png`;
-
-            tr.innerHTML = `
-                <td class="rank">#${index + 1}</td>
-                <td>
-                    <div class="player-cell">
-                        <img class="player-avatar" src="${avatarUrl}" alt="" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'28\' height=\'28\' fill=\'%232a2f45\'><rect width=\'28\' height=\'28\'/></svg>'">
-                        <span class="player-name">${player.name}</span>
-                    </div>
-                </td>
-                <td><span class="tier-badge tier-${tier}">${tier}</span></td>
-                <td><span class="points">${player.points}</span></td>
-            `;
-            tbody.appendChild(tr);
+        document.addEventListener('DOMContentLoaded', () => {
+            initEventListeners();
+            loadData();
         });
-    }
 
-    function changeMode(mode) {
-        currentMode = mode;
-        
-        // Переключение активного класса у кнопок
-        const buttons = document.querySelectorAll('.mode-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        filterPlayers();
-    }
-
-    function filterPlayers() {
-        const searchVal = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = playersData.filter(player => player.name.toLowerCase().includes(searchVal));
-        renderLeaderboard(filtered);
-    }
-
-    // Инициализация при загрузке
-    window.onload = () => {
-        renderLeaderboard(playersData);
-        
-        // Пример интеграции с реальным бэкендом (раскомментировать при подключении сервера):
-        /*
-        fetch('/api/rankings')
-            .then(res => res.json())
-            .then(data => {
-                playersData = data;
-                renderLeaderboard(playersData);
+        function initEventListeners() {
+            // Переключение режимов
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+                    const clickedTab = e.target.closest('.mode-tab');
+                    clickedTab.classList.add('active');
+                    
+                    currentMode = clickedTab.dataset.mode;
+                    renderTable(allPlayers);
+                });
             });
-        */
-    };
-</script>
+
+            // Живой поиск
+            const searchInput = document.getElementById('navSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const filtered = allPlayers.filter(p => p.name.toLowerCase().includes(query));
+                    renderTable(filtered);
+                });
+            }
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('/api/rankings');
+                if (!response.ok) throw new Error('Ошибка API');
+                const data = await response.json();
+                
+                allPlayers = Array.isArray(data) ? data : data.players || [];
+                
+                if (allPlayers.length === 0) {
+                    allPlayers = defaultPlayers;
+                }
+            } catch (error) {
+                console.warn('Сервер не ответил, загружены заглушки');
+                allPlayers = defaultPlayers;
+            }
+
+            // Сортировка по очкам (Elo)
+            allPlayers.sort((a, b) => (b.points || 0) - (a.points || 0));
+            renderTable(allPlayers);
+        }
+
+        function renderTable(players) {
+            const tbody = document.getElementById('rankingsTable');
+            tbody.innerHTML = '';
+
+            if (players.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">🔍 Игрок не найден или нет данных в этом режиме</div></td></tr>`;
+                return;
+            }
+
+            players.forEach((player, index) => {
+                const row = document.createElement('tr');
+                
+                // Красивые баджи для ТОП-3
+                let rankHtml = '';
+                if (index === 0) rankHtml = '<span class="rank-badge rank-1">1</span>';
+                else if (index === 1) rankHtml = '<span class="rank-badge rank-2">2</span>';
+                else if (index === 2) rankHtml = '<span class="rank-badge rank-3">3</span>';
+                else rankHtml = `<span class="rank-num">${index + 1}</span>`;
+
+                // Получаем тир игрока для выбранного режима
+                const tier = player.tiers?.[currentMode] || 'none';
+
+                row.innerHTML = `
+                    <td>${rankHtml}</td>
+                    <td>
+                        <div class="player-info">
+                            <img src="https://minotar.net/helm/${encodeURIComponent(player.name)}/32.png" 
+                                 alt="${player.name}" 
+                                 class="player-avatar" 
+                                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect fill=%22%23161822%22 width=%2232%22 height=%2232%22/%3E%3C/svg%3E'">
+                            <span class="player-name">${player.name}</span>
+                        </div>
+                    </td>
+                    <td><span class="elo-badge">${player.points || 0} XP</span></td>
+                    <td><span class="tier-badge tier-${tier}">${tier === 'none' ? '-' : tier}</span></td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+    </script>
 </body>
 </html>
