@@ -1,0 +1,30 @@
+/* Базовые цвета для подсветок карточек или значков тиров */
+.tier-ht1, .tier-lt1 {
+    border-left: 5px solid #ff5555; /* Красный/Бордовый для Tier 1 */
+    background: rgba(255, 85, 85, 0.05);
+}
+.tier-ht2, .tier-lt2 {
+    border-left: 5px solid #ffaa00; /* Оранжевый для Tier 2 */
+    background: rgba(255, 170, 0, 0.05);
+}
+.tier-ht3, .tier-lt3 {
+    border-left: 5px solid #aa00aa; /* Фиолетовый для Tier 3 */
+    background: rgba(170, 0, 170, 0.05);
+}
+.tier-ht4, .tier-lt4 {
+    border-left: 5px solid #5555ff; /* Синий для Tier 4 */
+    background: rgba(85, 85, 255, 0.05);
+}
+.tier-ht5, .tier-lt5 {
+    border-left: 5px solid #55ff55; /* Зеленый для Tier 5 */
+    background: rgba(85, 255, 85, 0.05);
+}
+
+/* Значок с самим тиром */
+.player-tier-badge {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #222;
+    color: #fff;
+}
