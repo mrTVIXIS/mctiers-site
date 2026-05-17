@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рейтинг Игроков | MCTiers Clone</title>
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --card-bg: #161925;
+            --text-color: #f0f3f5;
+            --accent-color: #5865f2;
+            --border-color: #23283d;
+            
+            /* Цвета тиров */
+            --tier-ht1: #ffb800;
+            --tier-lt1: #ffdd67;
+            --tier-ht2: #ff4655;
+            --tier-lt2: #ff7581;
+            --tier-ht3: #b967ff;
+            --tier-lt3: #d29bff;
+            --tier-ht4: #00f5ff;
+            --tier-lt4: #70f9ff;
+            --tier-ht5: #34e7a4;
+            --tier-lt5: #83f3c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            color: #8a939e;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modes {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background: #202438;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .mode-btn:hover, .mode-btn.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .search-box input {
+            background: #202438;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            width: 250px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 14px 20px;
+            text-align: left;
+        }
+
+        .leaderboard-table th {
+            background-color: #1a1e2e;
+            color: #8a939e;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .leaderboard-table tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.15s ease;
+        }
+
+        .leaderboard-table tr:hover {
+            background-color: #1d2133;
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #8a939e;
+            width: 70px;
+        }
+
+        tr:nth-child(1) .rank { color: #ffd700; font-size: 1.2rem; }
+        tr:nth-child(2) .rank { color: #c0c0c0; font-size: 1.1rem; }
+        tr:nth-child(3) .rank { color: #cd7f32; font-size: 1.05rem; }
+
+        .player-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .player-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            background: #2a2f45;
+        }
+
+        .player-name {
+            font-weight: 600;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-align: center;
+            min-width: 55px;
+        }
+
+        /* Классы для раскраски тиров */
+        .tier-HT1 { background: rgba(255, 184, 0, 0.15); color: var(--tier-ht1); border: 1px solid var(--tier-ht1); }
+        .tier-LT1 { background: rgba(255, 221, 103, 0.15); color: var(--tier-lt1); border: 1px solid var(--tier-lt1); }
+        .tier-HT2 { background: rgba(255, 70, 85, 0.15); color: var(--tier-ht2); border: 1px solid var(--tier-ht2); }
+        .tier-LT2 { background: rgba(255, 117, 129, 0.15); color: var(--tier-lt2); border: 1px solid var(--tier-lt2); }
+        .tier-HT3 { background: rgba(185, 103, 255, 0.15); color: var(--tier-ht3); border: 1px solid var(--tier-ht3); }
+        .tier-LT3 { background: rgba(210, 155, 255, 0.15); color: var(--tier-lt3); border: 1px solid var(--tier-lt3); }
+        .tier-HT4 { background: rgba(0, 245, 255, 0.15); color: var(--tier-ht4); border: 1px solid var(--tier-ht4); }
+        .tier-LT4 { background: rgba(112, 249, 255, 0.15); color: var(--tier-lt4); border: 1px solid var(--tier-lt4); }
+        .tier-HT5 { background: rgba(52, 231, 164, 0.15); color: var(--tier-ht5); border: 1px solid var(--tier-ht5); }
+        .tier-LT5 { background: rgba(131, 243, 199, 0.15); color: var(--tier-lt5); border: 1px solid var(--tier-lt5); }
+        .tier-none { background: #2a2f45; color: #8a939e; }
+
+        .points {
+            font-weight: 600;
+            color: #34e7a4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Рейтинг Игроков Сервера</h1>
+        <p>Официальные PvP тиры и общая таблица лидеров</p>
+    </header>
+
+    <div class="controls">
+        <div class="modes" id="modeContainer">
+            <button class="mode-btn active" onclick="changeMode('overall')">Overall</button>
+            <button class="mode-btn" onclick="changeMode('crystal')">Crystal</button>
+            <button class="mode-btn" onclick="changeMode('sword')">Sword</button>
+            <button class="mode-btn" onclick="changeMode('pot')">Netherite Pot</button>
+        </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск игрока..." oninput="filterPlayers()">
+        </div>
+    </div>
+
+    <table class="leaderboard-table">
+        <thead>
+            <tr>
+                <th style="width: 80px;">Ранг</th>
+                <th>Игрок</th>
+                <th style="width: 150px;">Текущий Тир</th>
+                <th style="width: 120px;">Очки</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // Демонстрационные данные (в реальности будут запрашиваться с бэкенда)
+    let playersData = [
+        { name: "strafikk", points: 157, tiers: { overall: "HT1", crystal: "LT1", sword: "HT2", pot: "HT3" } },
+        { name: "OUTSOBER", points: 109, tiers: { overall: "HT1", crystal: "LT2", sword: "HT3", pot: "LT3" } },
+        { name: "kayoumi", points: 106, tiers: { overall: "HT1", crystal: "LT2", sword: "HT3", pot: "none" } },
+        { name: "flowromance", points: 92, tiers: { overall: "HT1", crystal: "HT3", sword: "HT3", pot: "LT3" } },
+        { name: "oleg_321f", points: 65, tiers: { overall: "LT2", crystal: "HT3", sword: "HT3", pot: "HT3" } },
+        { name: "gassdent", points: 58, tiers: { overall: "HT3", crystal: "HT3", sword: "HT3", pot: "HT3" } },
+        { name: "Player_Zero", points: 34, tiers: { overall: "LT4", crystal: "HT4", sword: "LT5", pot: "none" } }
+    ];
+
+    let currentMode = 'overall';
+
+    function renderLeaderboard(data) {
+        const tbody = document.getElementById('leaderboardBody');
+        tbody.innerHTML = '';
+
+        // Сортируем данные в зависимости от очков (или можно сделать сортировку по силе тира в режиме)
+        let sortedData = [...data].sort((a, b) => b.points - a.points);
+
+        sortedData.forEach((player, index) => {
+            const tier = player.tiers[currentMode] || 'none';
+            const tr = document.createElement('tr');
+            
+            // Получаем аватарку по нику с помощью сервиса Crafatar / Minotar
+            const avatarUrl = `https://minotar.net/helm/${player.name}/28.png`;
+
+            tr.innerHTML = `
+                <td class="rank">#${index + 1}</td>
+                <td>
+                    <div class="player-cell">
+                        <img class="player-avatar" src="${avatarUrl}" alt="" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'28\' height=\'28\' fill=\'%232a2f45\'><rect width=\'28\' height=\'28\'/></svg>'">
+                        <span class="player-name">${player.name}</span>
+                    </div>
+                </td>
+                <td><span class="tier-badge tier-${tier}">${tier}</span></td>
+                <td><span class="points">${player.points}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function changeMode(mode) {
+        currentMode = mode;
+        
+        // Переключение активного класса у кнопок
+        const buttons = document.querySelectorAll('.mode-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        filterPlayers();
+    }
+
+    function filterPlayers() {
+        const searchVal = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = playersData.filter(player => player.name.toLowerCase().includes(searchVal));
+        renderLeaderboard(filtered);
+    }
+
+    // Инициализация при загрузке
+    window.onload = () => {
+        renderLeaderboard(playersData);
+        
+        // Пример интеграции с реальным бэкендом (раскомментировать при подключении сервера):
+        /*
+        fetch('/api/rankings')
+            .then(res => res.json())
+            .then(data => {
+                playersData = data;
+                renderLeaderboard(playersData);
+            });
+        */
+    };
+</script>
+</body>
+</html>
